@@ -1,6 +1,6 @@
-package com.ahmed.compressiontechniques.tech;
+package com.ahmed.compression.techniques.tech;
 
-import com.ahmed.compressiontechniques.util.LzwFile;
+import com.ahmed.compression.techniques.util.LzwFile;
 
 import java.nio.file.Files;
 import java.nio.file.Path;

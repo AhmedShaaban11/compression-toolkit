@@ -1,4 +1,4 @@
-package com.ahmed.compressiontechniques.tech;
+package com.ahmed.compression.techniques.tech;
 
 import java.io.FileWriter;
 import java.io.IOException;

@@ -1,7 +1,7 @@
-package com.ahmed.compressiontechniques;
+package com.ahmed.compression.techniques;
 
-import com.ahmed.compressiontechniques.tech.Technique;
-import com.ahmed.compressiontechniques.tech.TechniqueFactory;
+import com.ahmed.compression.techniques.tech.Technique;
+import com.ahmed.compression.techniques.tech.TechniqueFactory;
 import javafx.fxml.FXML;
 import javafx.scene.control.ChoiceBox;
 import javafx.stage.FileChooser;

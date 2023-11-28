@@ -1,4 +1,4 @@
-package com.ahmed.compressiontechniques;
+package com.ahmed.compression.techniques;
 
 import javafx.application.Application;
 import javafx.fxml.FXMLLoader;

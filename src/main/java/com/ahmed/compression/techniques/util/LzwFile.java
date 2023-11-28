@@ -1,4 +1,4 @@
-package com.ahmed.compressiontechniques.util;
+package com.ahmed.compression.techniques.util;
 
 import java.io.*;
 import java.util.ArrayList;

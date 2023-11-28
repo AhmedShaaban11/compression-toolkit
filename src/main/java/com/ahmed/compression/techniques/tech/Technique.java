@@ -1,4 +1,4 @@
-package com.ahmed.compressiontechniques.tech;
+package com.ahmed.compression.techniques.tech;
 
 public interface Technique {
   void compress(String inputPath, String outputPath);

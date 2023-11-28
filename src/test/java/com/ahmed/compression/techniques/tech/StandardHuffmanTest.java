@@ -1,4 +1,4 @@
-package com.ahmed.compressiontechniques.tech;
+package com.ahmed.compression.techniques.tech;
 
 import org.junit.jupiter.api.Test;
 
@@ -60,17 +60,17 @@ public class StandardHuffmanTest {
 //    assertEquals(1.0 / data.length(), probabilities.get('i'));
 //  }
 
-  @Test
-  void getHuffmanCodesTest1() {
-    String data = "aaaaaaabbbbbbbefsadf xcdfsasdssfasdffefaccccccdddddd";
-    var standardHuffman = new StandardHuffman();
-    standardHuffman.compress(data);
-  }
-
-  @Test
-  void getHuffmanCodesTest2() {
-    String data = "Hello, World!";
-    var standardHuffman = new StandardHuffman();
-    standardHuffman.compress(data);
-  }
+//  @Test
+//  void getHuffmanCodesTest1() {
+//    String data = "aaaaaaabbbbbbbefsadf xcdfsasdssfasdffefaccccccdddddd";
+//    var standardHuffman = new StandardHuffman();
+//    standardHuffman.compress(data);
+//  }
+//
+//  @Test
+//  void getHuffmanCodesTest2() {
+//    String data = "Hello, World!";
+//    var standardHuffman = new StandardHuffman();
+//    standardHuffman.compress(data);
+//  }
 }

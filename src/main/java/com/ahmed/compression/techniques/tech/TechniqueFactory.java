@@ -1,4 +1,4 @@
-package com.ahmed.compressiontechniques.tech;
+package com.ahmed.compression.techniques.tech;
 
 public class TechniqueFactory {
   public Technique createTechnique(String name) {

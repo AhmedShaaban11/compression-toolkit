@@ -3,10 +3,10 @@ module com.ahmed {
   requires javafx.fxml;
 
 
-  opens com.ahmed.compressiontechniques to javafx.fxml;
-  opens com.ahmed.compressiontechniques.util to javafx.fxml;
-  opens com.ahmed.compressiontechniques.tech to javafx.fxml;
-  exports com.ahmed.compressiontechniques;
-  exports com.ahmed.compressiontechniques.util;
-  exports com.ahmed.compressiontechniques.tech;
+  opens com.ahmed.compression.techniques to javafx.fxml;
+  opens com.ahmed.compression.techniques.util to javafx.fxml;
+  opens com.ahmed.compression.techniques.tech to javafx.fxml;
+  exports com.ahmed.compression.techniques;
+  exports com.ahmed.compression.techniques.util;
+  exports com.ahmed.compression.techniques.tech;
 }

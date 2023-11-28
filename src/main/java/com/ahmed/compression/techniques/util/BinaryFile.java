@@ -1,4 +1,4 @@
-package com.ahmed.compressiontechniques.util;
+package com.ahmed.compression.techniques.util;
 
 import java.io.File;
 import java.nio.file.FileStore;
@@ -40,6 +40,14 @@ abstract public class BinaryFile {
     } catch (Exception e) {
       e.printStackTrace();
     }
+  }
+
+  protected String intToBinaryString(int n, int digitsCount) {
+    String bin = Integer.toBinaryString(n);
+    if (bin.length() < digitsCount) {
+      bin = "0".repeat(digitsCount - bin.length()) + bin;
+    }
+    return bin;
   }
 
   protected byte[] convertBitsToBytes(String bits) {
