@@ -1,4 +1,6 @@
-package com.ahmed.compression.techniques.tech;
+package com.ahmed.compression.techniques.tech.lossless;
+
+import com.ahmed.compression.techniques.tech.Technique;
 
 import java.io.FileWriter;
 import java.io.IOException;

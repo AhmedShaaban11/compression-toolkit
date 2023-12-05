@@ -1,4 +1,4 @@
-package com.ahmed.compression.techniques.tech;
+package com.ahmed.compression.techniques.tech.lossless;
 
 import java.util.HashMap;
 

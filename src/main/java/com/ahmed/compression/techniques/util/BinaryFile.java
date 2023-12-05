@@ -42,7 +42,7 @@ abstract public class BinaryFile {
     }
   }
 
-  protected String intToBinaryString(int n, int digitsCount) {
+  public static String intToBinaryString(int n, int digitsCount) {
     String bin = Integer.toBinaryString(n);
     if (bin.length() < digitsCount) {
       bin = "0".repeat(digitsCount - bin.length()) + bin;

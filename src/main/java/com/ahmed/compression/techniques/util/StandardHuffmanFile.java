@@ -1,6 +1,6 @@
 package com.ahmed.compression.techniques.util;
 
-import com.ahmed.compression.techniques.tech.StandardHuffmanCompressResult;
+import com.ahmed.compression.techniques.tech.lossless.StandardHuffmanCompressResult;
 
 import java.nio.file.Path;
 import java.util.HashMap;

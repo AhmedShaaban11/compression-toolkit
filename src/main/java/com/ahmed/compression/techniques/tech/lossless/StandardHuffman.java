@@ -1,5 +1,6 @@
-package com.ahmed.compression.techniques.tech;
+package com.ahmed.compression.techniques.tech.lossless;
 
+import com.ahmed.compression.techniques.tech.Technique;
 import com.ahmed.compression.techniques.util.StandardHuffmanFile;
 
 import java.nio.file.Path;
