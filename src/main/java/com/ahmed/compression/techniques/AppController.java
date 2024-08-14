@@ -2,7 +2,7 @@ package com.ahmed.compression.techniques;
 
 import com.ahmed.compression.techniques.tech.Technique;
 import com.ahmed.compression.techniques.tech.TechniqueFactory;
-import com.ahmed.compression.techniques.tech.lossy.VectorQuantization;
+import com.ahmed.compression.techniques.tech.lossy.vectorquantization.VectorQuantization;
 import javafx.fxml.FXML;
 import javafx.scene.control.ChoiceBox;
 import javafx.scene.control.TextField;
@@ -12,6 +12,8 @@ import javafx.stage.Stage;
 
 import java.io.File;
 import java.nio.file.Path;
+import java.util.HashMap;
+import java.util.Map;
 
 public class AppController {
   @FXML
@@ -60,7 +62,11 @@ public class AppController {
       int vecWidth = Integer.parseInt(this.vecWidth.getText());
       int vecHeight = Integer.parseInt(this.vecHeight.getText());
       int codebooksLevels = Integer.parseInt(this.codebooksLevels.getText());
-      vectorQuantization.compress(inputPath.toString(), outputPath.toString(), vecWidth, vecHeight, codebooksLevels);
+      Map<String, Object> props = new HashMap<>();
+      props.put("vecWidth", vecWidth);
+      props.put("vecHeight", vecHeight);
+      props.put("codebooksLevels", codebooksLevels);
+      vectorQuantization.compress(inputPath.toString(), outputPath.toString(), props);
       return;
     }
     tech.compress(inputPath.toString(), outputPath.toString());

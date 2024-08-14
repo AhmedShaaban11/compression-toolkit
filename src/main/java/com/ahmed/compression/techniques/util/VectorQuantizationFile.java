@@ -1,6 +1,6 @@
 package com.ahmed.compression.techniques.util;
 
-import com.ahmed.compression.techniques.tech.lossy.Vector;
+import com.ahmed.compression.techniques.tech.lossy.vectorquantization.Vector;
 
 import java.nio.file.Path;
 import java.util.ArrayList;
@@ -29,25 +29,27 @@ public class VectorQuantizationFile extends BinaryFile {
     return bits.toString();
   }
 
-  public void writeImg(String path, ArrayList<Vector> vectors, ArrayList<Vector> codebooks, int vecWidth, int vecHeight, int imgWidth, int imgHeight) {
+  public void writeImg(String path, boolean isGrey, ArrayList<Vector> vectors, ArrayList<Vector> codebooks, int vecWidth, int vecHeight, int imgWidth, int imgHeight) {
     int codebooksDigitsCount = (int) Math.ceil(Math.log(codebooks.size()) / Math.log(2));
     String bits = "";
+    bits += isGrey ? "1" : "0";
     bits += writeCodeBooks(codebooks, vecWidth, vecHeight);
     bits += writeImage(vectors, imgWidth, imgHeight, codebooksDigitsCount);
     byte[] bytes = convertBitsToBytes(bits);
     writeBinaryFile(Path.of(path), bytes);
   }
 
-  public ReadResult readImg(String path) {
+  public VectorQuantizationReadResult readImg(String path) {
     byte[] bytes = readBinaryFile(Path.of(path));
     String bits = convertBytesToBits(bytes);
     int bitsIdx = 0;
+    boolean isGrey = Integer.parseInt(bits.substring(bitsIdx, bitsIdx += 1), 2) == 1;
     int codebooksCount = Integer.parseInt(bits.substring(bitsIdx, bitsIdx += 16), 2);
     int vecWidth = Integer.parseInt(bits.substring(bitsIdx, bitsIdx += 16), 2);
     int vecHeight = Integer.parseInt(bits.substring(bitsIdx, bitsIdx += 16), 2);
     ArrayList<Vector> codebooks = new ArrayList<>();
     for (int i = 0; i < codebooksCount; ++i) {
-      int[] pixels = new int[vecWidth * vecHeight];
+      int[] pixels = isGrey ? new int[vecWidth * vecHeight] : new int [vecWidth * vecHeight * 3];
       for (int j = 0; j < pixels.length; ++j) {
         String pixelBits = bits.substring(bitsIdx, bitsIdx += 8);
         pixels[j] = Integer.parseInt(pixelBits, 2);
@@ -62,6 +64,6 @@ public class VectorQuantizationFile extends BinaryFile {
       String labelBits = bits.substring(bitsIdx, bitsIdx += codebooksDigitsCount);
       labels.add(Integer.parseInt(labelBits, 2));
     }
-    return new ReadResult(codebooks, labels, vecWidth, vecHeight, imgWidth, imgHeight);
+    return new VectorQuantizationReadResult(codebooks, labels, vecWidth, vecHeight, imgWidth, imgHeight, isGrey);
   }
 }

@@ -7,16 +7,37 @@
 <?import java.lang.String?>
 <?import javafx.collections.FXCollections?>
 <?import javafx.scene.layout.FlowPane?>
+<?import com.sun.javafx.scene.control.IntegerField?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.layout.Pane?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.layout.TilePane?>
 <VBox xmlns:fx="http://javafx.com/fxml" fx:controller="com.ahmed.compression.techniques.AppController" alignment="CENTER" spacing="10">
-    <ChoiceBox fx:id="choiceBox" value="Standard Huffman">
+    <ChoiceBox fx:id="choiceBox" value="LZ77" onAction="#choiceBoxAction">
         <items>
             <FXCollections fx:factory="observableArrayList">
                 <String fx:value="LZ77"/>
                 <String fx:value="LZW"/>
                 <String fx:value="Standard Huffman"/>
+                <String fx:value="Vector Quantization"/>
+                <String fx:value="2D Prediction"/>
             </FXCollections>
         </items>
     </ChoiceBox>
+    <FlowPane fx:id="vectorQuantizationPane" orientation="VERTICAL" alignment="CENTER" visible="false">
+        <TilePane alignment="CENTER" tileAlignment="CENTER_LEFT">
+            <Label text="Vector Width: "/>
+            <TextField fx:id="vecWidth" maxWidth="50" promptText="0"/>
+        </TilePane>
+        <TilePane alignment="CENTER" tileAlignment="CENTER_LEFT">
+            <Label text="Vector Height: "/>
+            <TextField fx:id="vecHeight" maxWidth="50" promptText="0"/>
+        </TilePane>
+        <TilePane alignment="CENTER" tileAlignment="CENTER_LEFT">
+            <Label text="Codebooks Levels: "/>
+            <TextField fx:id="codebooksLevels" maxWidth="50" promptText="0"/>
+        </TilePane>
+    </FlowPane>
     <FlowPane alignment="CENTER">
         <Button text="Compress" onAction="#compressButtonAction"/>
         <Button text="Decompress" onAction="#decompressButtonAction"/>

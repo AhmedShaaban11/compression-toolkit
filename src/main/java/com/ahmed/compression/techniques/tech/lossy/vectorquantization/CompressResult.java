@@ -1,4 +1,4 @@
-package com.ahmed.compression.techniques.tech.lossy;
+package com.ahmed.compression.techniques.tech.lossy.vectorquantization;
 
 import java.util.ArrayList;
 
