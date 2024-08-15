@@ -4,7 +4,7 @@ import com.ahmed.compression.techniques.tech.lossless.Lz77;
 import com.ahmed.compression.techniques.tech.lossless.Lzw;
 import com.ahmed.compression.techniques.tech.lossless.StandardHuffman;
 import com.ahmed.compression.techniques.tech.lossy.VectorQuantization;
-import com.ahmed.compression.techniques.tech.lossy.prediction.TwoDPrediction;
+import com.ahmed.compression.techniques.tech.lossy.TwoDPrediction;
 
 public class TechniqueFactory {
   public Technique createTechnique(String name) {

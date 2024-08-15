@@ -1,5 +1,10 @@
-package com.ahmed.compression.techniques.tech.lossy.prediction;
+package com.ahmed.compression.techniques.tech.lossy;
 
+import com.ahmed.compression.techniques.information.lossy.twodprediction.TwoDPredictionCompressedFileInfo;
+import com.ahmed.compression.techniques.information.lossy.twodprediction.TwoDPredictionCompressionInfo;
+import com.ahmed.compression.techniques.information.lossy.twodprediction.TwoDPredictionDecompressedFileInfo;
+import com.ahmed.compression.techniques.information.lossy.twodprediction.TwoDPredictionDecompressionInfo;
+import com.ahmed.compression.techniques.tech.NewTechnique;
 import com.ahmed.compression.techniques.tech.Technique;
 import com.ahmed.compression.techniques.io.TwoDPredictionFile;
 
@@ -8,8 +13,9 @@ import java.awt.image.BufferedImage;
 import java.awt.image.Raster;
 import java.awt.image.WritableRaster;
 import java.io.File;
+import java.nio.file.Path;
 
-public class TwoDPrediction implements Technique {
+public class TwoDPrediction implements Technique, NewTechnique<TwoDPredictionCompressedFileInfo, TwoDPredictionDecompressedFileInfo, TwoDPredictionCompressionInfo, TwoDPredictionDecompressionInfo> {
   private static final int QUANTIZE_BITS_COUNT = 8;
   private static final int MIN_DIFFERENCE = -255;
   private static final int MAX_DIFFERENCE = 255;
@@ -53,30 +59,12 @@ public class TwoDPrediction implements Technique {
     }
   }
 
-  public CompressResult compress(Raster raster, int bytes) {
-    int[][] predictionArr = getPredictionArr(raster, bytes);
-    computePredictDifference(predictionArr, bytes);
-    quantize(predictionArr, bytes);
-    return new CompressResult(
-      bytes == 1,
-      raster.getWidth(),
-      raster.getHeight(),
-      QUANTIZE_BITS_COUNT,
-      predictionArr
-    );
-  }
-
   @Override
   public void compress(String inPath, String outPath) {
-    try {
-      BufferedImage img = ImageIO.read(new File(inPath));
-      int bytes = img.getType() == BufferedImage.TYPE_BYTE_GRAY ? 1 : 3;
-      CompressResult compressResult = compress(img.getData(), bytes);
-      TwoDPredictionFile file = new TwoDPredictionFile();
-      file.write(outPath, compressResult);
-    } catch (Exception e) {
-      System.out.println(e.getMessage());
-    }
+    TwoDPredictionFile file = new TwoDPredictionFile();
+    TwoDPredictionDecompressedFileInfo decompressedFileInfo = file.readDecompressedFile(Path.of(inPath));
+    TwoDPredictionCompressionInfo fileInfo = compress(decompressedFileInfo);
+    file.writeCompressedFile(Path.of(outPath), fileInfo);
   }
 
   private void deQuantize(int[][] predictionArr, int bytes, int quantizationBitsCount) {
@@ -110,32 +98,43 @@ public class TwoDPrediction implements Technique {
     }
   }
 
-  private void decompress(CompressResult readResult) {
-    int bytes = readResult.isGrey() ? 1 : 3;
-    deQuantize(readResult.getPrediction(), bytes, readResult.getQuantizationBits());
-    computeOriginal(readResult.getPrediction(), bytes);
-  }
-
   @Override
   public void decompress(String inPath, String outPath) {
     TwoDPredictionFile file = new TwoDPredictionFile();
-    CompressResult readResult = file.read(inPath);
-    decompress(readResult);
-    try {
-      BufferedImage img = new BufferedImage(
-        readResult.getWidth(),
-        readResult.getHeight(),
-        readResult.isGrey() ? BufferedImage.TYPE_BYTE_GRAY : BufferedImage.TYPE_3BYTE_BGR
-      );
-      WritableRaster raster = img.getRaster();
-      for (int i = 0; i < readResult.getHeight(); ++i) {
-        raster.setPixels(0, i, readResult.getWidth(), 1, readResult.getPrediction()[i]);
-      }
-      img.setData(raster);
-      ImageIO.write(img, "bmp", new File(outPath));
-    } catch (Exception e) {
-      System.out.println(e.getMessage());
+    TwoDPredictionCompressedFileInfo fileInfo = file.readCompressedFile(Path.of(inPath));
+    var decompressionInfo = decompress(fileInfo);
+    file.writeDecompressedFile(Path.of(outPath), decompressionInfo);
+  }
+
+  @Override
+  public TwoDPredictionCompressionInfo compress(TwoDPredictionDecompressedFileInfo fileInfo) {
+    int[][] predictionArr = getPredictionArr(fileInfo.raster(), fileInfo.colorBytes());
+    computePredictDifference(predictionArr, fileInfo.colorBytes());
+    quantize(predictionArr, fileInfo.colorBytes());
+    return new TwoDPredictionCompressionInfo(
+        fileInfo.colorBytes() == 1,
+        fileInfo.raster().getWidth(),
+        fileInfo.raster().getHeight(),
+        QUANTIZE_BITS_COUNT,
+        predictionArr
+    );
+  }
+
+  @Override
+  public TwoDPredictionDecompressionInfo decompress(TwoDPredictionCompressedFileInfo fileInfo) {
+    int colorBytes = fileInfo.isGrey() ? 1 : 3;
+    deQuantize(fileInfo.prediction(), colorBytes, fileInfo.quantizationBits());
+    computeOriginal(fileInfo.prediction(), colorBytes);
+    BufferedImage img = new BufferedImage(
+        fileInfo.imgWidth(),
+        fileInfo.imgHeight(),
+        fileInfo.isGrey() ? BufferedImage.TYPE_BYTE_GRAY : BufferedImage.TYPE_3BYTE_BGR
+    );
+    WritableRaster raster = img.getRaster();
+    for (int i = 0; i < fileInfo.imgHeight(); ++i) {
+      raster.setPixels(0, i, fileInfo.imgWidth(), 1, fileInfo.prediction()[i]);
     }
+    return new TwoDPredictionDecompressionInfo(img);
   }
 
   public static void main(String[] args) {

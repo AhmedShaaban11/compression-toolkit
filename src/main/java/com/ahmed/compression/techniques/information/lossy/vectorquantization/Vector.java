@@ -1,7 +1,7 @@
 package com.ahmed.compression.techniques.information.lossy.vectorquantization;
 
 public class Vector {
-  private int[] pixels;
+  private final int[] pixels;
   private int label;
 
   public Vector(int[] pixels) {
