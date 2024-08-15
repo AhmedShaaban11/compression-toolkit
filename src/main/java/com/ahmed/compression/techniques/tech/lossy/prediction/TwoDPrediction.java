@@ -1,7 +1,7 @@
-package com.ahmed.compression.techniques.tech.prediction;
+package com.ahmed.compression.techniques.tech.lossy.prediction;
 
 import com.ahmed.compression.techniques.tech.Technique;
-import com.ahmed.compression.techniques.util.TwoDPredictionFile;
+import com.ahmed.compression.techniques.io.TwoDPredictionFile;
 
 import javax.imageio.ImageIO;
 import java.awt.image.BufferedImage;

@@ -1,8 +1,8 @@
 package com.ahmed.compression.techniques.tech.lossy.vectorquantization;
 
 import com.ahmed.compression.techniques.tech.Technique;
-import com.ahmed.compression.techniques.util.VectorQuantizationFile;
-import com.ahmed.compression.techniques.util.VectorQuantizationReadResult;
+import com.ahmed.compression.techniques.io.VectorQuantizationFile;
+import com.ahmed.compression.techniques.io.VectorQuantizationReadResult;
 
 import javax.imageio.ImageIO;
 import java.awt.image.BufferedImage;

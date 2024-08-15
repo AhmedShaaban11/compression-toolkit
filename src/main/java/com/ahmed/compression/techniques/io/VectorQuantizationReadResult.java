@@ -1,4 +1,4 @@
-package com.ahmed.compression.techniques.util;
+package com.ahmed.compression.techniques.io;
 
 import com.ahmed.compression.techniques.tech.lossy.vectorquantization.Vector;
 

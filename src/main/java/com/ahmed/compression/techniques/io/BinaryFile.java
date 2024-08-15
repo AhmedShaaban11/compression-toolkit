@@ -1,7 +1,5 @@
-package com.ahmed.compression.techniques.util;
+package com.ahmed.compression.techniques.io;
 
-import java.io.File;
-import java.nio.file.FileStore;
 import java.nio.file.Files;
 import java.nio.file.Path;
 
@@ -78,4 +76,5 @@ abstract public class BinaryFile {
     }
     return bitsBuilder.toString();
   }
+
 }

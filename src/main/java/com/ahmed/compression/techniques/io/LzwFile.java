@@ -1,9 +1,19 @@
-package com.ahmed.compression.techniques.util;
+package com.ahmed.compression.techniques.io;
 
-import java.io.*;
+import com.ahmed.compression.techniques.information.lzw.LzwCompressedFileInfo;
+import com.ahmed.compression.techniques.information.lzw.LzwCompressionInfo;
+import com.ahmed.compression.techniques.information.lzw.LzwDecompressedFileInfo;
+import com.ahmed.compression.techniques.information.lzw.LzwDecompressionInfo;
+
+import java.io.DataInputStream;
+import java.io.DataOutputStream;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.ArrayList;
 
-public class LzwFile extends BinaryFile {
+public class LzwFile extends BinaryFile implements ReaderWriter<LzwCompressedFileInfo, LzwDecompressedFileInfo, LzwCompressionInfo, LzwDecompressionInfo> {
   private String convertTagsToBits(ArrayList<Integer> nums, int tag_size) {
     StringBuilder binary_nums = new StringBuilder();
     for (int i = 0; i < nums.size(); ++i) {
@@ -17,7 +27,7 @@ public class LzwFile extends BinaryFile {
     return binary_nums.toString();
   }
 
-  public void writeTags(String path, ArrayList<Integer> nums, int tagBits) {
+  public void writeTags(String path, int tagBits, ArrayList<Integer> nums) {
     try {
       String bits = convertTagsToBits(nums, tagBits);
       byte[] bytes = convertBitsToBytes(bits);
@@ -57,4 +67,23 @@ public class LzwFile extends BinaryFile {
     return nums;
   }
 
+  @Override
+  public LzwCompressedFileInfo readCompressedFile(Path path) {
+    return new LzwCompressedFileInfo(readTags(path.toString()));
+  }
+
+  @Override
+  public LzwDecompressedFileInfo readDecompressedFile(Path path) {
+    return new LzwDecompressedFileInfo(readRegularFile(path));
+  }
+
+  @Override
+  public void writeCompressedFile(Path path, LzwCompressionInfo info) {
+    writeTags(path.toString(), info.tagBits(), info.tags());
+  }
+
+  @Override
+  public void writeDecompressedFile(Path path, LzwDecompressionInfo info) {
+    writeRegularFile(path, info.data());
+  }
 }

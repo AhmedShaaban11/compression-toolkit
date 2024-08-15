@@ -1,4 +1,4 @@
-package com.ahmed.compression.techniques.tech.prediction;
+package com.ahmed.compression.techniques.tech.lossy.prediction;
 
 public class CompressResult {
   private boolean isGrey;

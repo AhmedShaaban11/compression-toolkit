@@ -1,14 +1,19 @@
 package com.ahmed.compression.techniques.tech.lossless;
 
+import com.ahmed.compression.techniques.information.lzw.LzwCompressedFileInfo;
+import com.ahmed.compression.techniques.information.lzw.LzwCompressionInfo;
+import com.ahmed.compression.techniques.information.lzw.LzwDecompressedFileInfo;
+import com.ahmed.compression.techniques.information.lzw.LzwDecompressionInfo;
+import com.ahmed.compression.techniques.tech.NewTechnique;
 import com.ahmed.compression.techniques.tech.Technique;
-import com.ahmed.compression.techniques.util.LzwFile;
+import com.ahmed.compression.techniques.io.LzwFile;
 
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.HashMap;
 
-public class Lzw implements Technique {
+public class Lzw implements Technique, NewTechnique<LzwCompressedFileInfo, LzwDecompressedFileInfo, LzwCompressionInfo, LzwDecompressionInfo> {
   private HashMap<String, Integer> getAsciiCharsDictionary() {
     HashMap<String, Integer> dictionary = new HashMap<>();
     // Fill dictionary with ascii codes from 0 to 127
@@ -27,22 +32,8 @@ public class Lzw implements Technique {
     return dictionary;
   }
 
-  private class CompressResult {
-    ArrayList<Integer> tags;
-    int tagBits;
-    CompressResult(ArrayList<Integer> tags, int tagBits) {
-      this.tags = tags;
-      this.tagBits = tagBits;
-    }
-    public ArrayList<Integer> getTags() {
-      return tags;
-    }
-    public int getTagBits() {
-      return tagBits;
-    }
-  }
 
-  private CompressResult compress(String str) {
+  private LzwCompressionInfo compress(String str) {
     HashMap<String, Integer> dictionary = getAsciiCharsDictionary();
     ArrayList<Integer> tags = new ArrayList<>();
     int tagBits = 7;
@@ -68,23 +59,23 @@ public class Lzw implements Technique {
     if (!prvCode.isEmpty()) {
       tags.add(dictionary.get(prvCode));
     }
-    return new CompressResult(tags, tagBits);
+    return new LzwCompressionInfo(tagBits, tags);
   }
 
   @Override
   public void compress(String inputPath, String outputPath) {
     try {
       String data = Files.readString(Path.of(inputPath));
-      CompressResult compressResult = compress(data);
+      LzwCompressionInfo compressionInfo = compress(data);
       LzwFile handler = new LzwFile();
-      handler.writeTags(outputPath, compressResult.tags, compressResult.tagBits);
+      handler.writeTags(outputPath, compressionInfo.tagBits(), compressionInfo.tags());
     } catch (Exception e) {
       System.out.println(e.getMessage());
       e.printStackTrace();
     }
   }
 
-  private String decompress(ArrayList<Integer> nums) {
+  private LzwDecompressionInfo decompress(ArrayList<Integer> nums) {
     HashMap<Integer, String> dictionary = getAsciiIntegerDictionary();
     StringBuilder decompressed = new StringBuilder();
     decompressed.append(dictionary.get(nums.get(0)));
@@ -95,7 +86,7 @@ public class Lzw implements Technique {
       dictionary.put(dictionary.size(), prvCode + lastChar); // Put first for handling null case
       decompressed.append(dictionary.get(nums.get(i))); // Not using cur because it might be null
     }
-    return decompressed.toString();
+    return new LzwDecompressionInfo(decompressed.toString());
   }
 
   @Override
@@ -103,12 +94,21 @@ public class Lzw implements Technique {
     try {
       LzwFile handler = new LzwFile();
       ArrayList<Integer> tags = handler.readTags(inputPath);
-      String data = decompress(tags);
-      Files.writeString(Path.of(outputPath), data);
+      LzwDecompressionInfo decompressionInfo = decompress(tags);
+      Files.writeString(Path.of(outputPath), decompressionInfo.data());
     } catch (Exception e) {
       System.out.println(e.getMessage());
       e.printStackTrace();
     }
   }
 
+  @Override
+  public LzwCompressionInfo compress(LzwDecompressedFileInfo fileInfo) {
+    return compress(fileInfo.data());
+  }
+
+  @Override
+  public LzwDecompressionInfo decompress(LzwCompressedFileInfo fileInfo) {
+    return decompress(fileInfo.tags());
+  }
 }
