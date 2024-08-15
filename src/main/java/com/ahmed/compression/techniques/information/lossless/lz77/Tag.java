@@ -1,4 +1,4 @@
-package com.ahmed.compression.techniques.information.lz77;
+package com.ahmed.compression.techniques.information.lossless.lz77;
 
 public record Tag(int position, int length, char nextChar) {
   @Override

@@ -1,18 +1,26 @@
 package com.ahmed.compression.techniques.io;
 
-import com.ahmed.compression.techniques.tech.lossy.vectorquantization.Vector;
+import com.ahmed.compression.techniques.information.lossy.vectorquantization.VectorQuantizationCompressedFileInfo;
+import com.ahmed.compression.techniques.information.lossy.vectorquantization.VectorQuantizationCompressionInfo;
+import com.ahmed.compression.techniques.information.lossy.vectorquantization.VectorQuantizationDecompressedFileInfo;
+import com.ahmed.compression.techniques.information.lossy.vectorquantization.VectorQuantizationDecompressionInfo;
+import com.ahmed.compression.techniques.information.lossy.vectorquantization.Vector;
 
+import javax.imageio.ImageIO;
+import java.awt.image.BufferedImage;
+import java.io.IOException;
 import java.nio.file.Path;
 import java.util.ArrayList;
-public class VectorQuantizationFile extends BinaryFile {
+
+public class VectorQuantizationFile extends BinaryFile implements ReaderWriter<VectorQuantizationCompressedFileInfo, VectorQuantizationDecompressedFileInfo, VectorQuantizationCompressionInfo, VectorQuantizationDecompressionInfo> {
   private String writeCodeBooks(ArrayList<Vector> codebooks, int vecWidth, int vecHeight) {
     StringBuilder bits = new StringBuilder();
     bits.append(intToBinaryString(codebooks.size(), 16));
     bits.append(intToBinaryString(vecWidth, 16));
     bits.append(intToBinaryString(vecHeight, 16));
     for (Vector codebook : codebooks) {
-      for (int i = 0; i < codebook.getSize(); ++i) {
-        bits.append(intToBinaryString(codebook.getPixel(i), 8));
+      for (int i = 0; i < codebook.size(); ++i) {
+        bits.append(intToBinaryString(codebook.pixel(i), 8));
       }
     }
     return bits.toString();
@@ -23,7 +31,7 @@ public class VectorQuantizationFile extends BinaryFile {
     bits.append(intToBinaryString(imgWidth, 16));
     bits.append(intToBinaryString(imgHeight, 16));
     for (Vector vector : vectors) {
-      String labelBits = intToBinaryString(vector.getLabel(), codebooksDigitsCount);
+      String labelBits = intToBinaryString(vector.label(), codebooksDigitsCount);
       bits.append(labelBits);
     }
     return bits.toString();
@@ -39,7 +47,7 @@ public class VectorQuantizationFile extends BinaryFile {
     writeBinaryFile(Path.of(path), bytes);
   }
 
-  public VectorQuantizationReadResult readImg(String path) {
+  public VectorQuantizationCompressedFileInfo readImg(String path) {
     byte[] bytes = readBinaryFile(Path.of(path));
     String bits = convertBytesToBits(bytes);
     int bitsIdx = 0;
@@ -64,6 +72,38 @@ public class VectorQuantizationFile extends BinaryFile {
       String labelBits = bits.substring(bitsIdx, bitsIdx += codebooksDigitsCount);
       labels.add(Integer.parseInt(labelBits, 2));
     }
-    return new VectorQuantizationReadResult(codebooks, labels, vecWidth, vecHeight, imgWidth, imgHeight, isGrey);
+    return new VectorQuantizationCompressedFileInfo(vecWidth, vecHeight, imgWidth, imgHeight, isGrey, codebooks, labels);
+  }
+
+  @Override
+  public VectorQuantizationCompressedFileInfo readCompressedFile(Path path) {
+    return readImg(path.toString());
+  }
+
+  @Override
+  public VectorQuantizationDecompressedFileInfo readDecompressedFile(Path path) {
+    BufferedImage img = null;
+    try {
+      img = ImageIO.read(path.toFile());
+      return new VectorQuantizationDecompressedFileInfo(img.getRaster(), 4, 4, 3);
+    } catch (IOException e) {
+      e.printStackTrace();
+    }
+    // TODO: Take user input for vecWidth, vecHeight, and codebooksLevels
+    return new VectorQuantizationDecompressedFileInfo(null, 4, 4, 3);
+  }
+
+  @Override
+  public void writeCompressedFile(Path path, VectorQuantizationCompressionInfo info) {
+    writeImg(path.toString(), info.isGrey(), info.vectors(), info.codebooks(), info.vecWidth(), info.vecHeight(), info.raster().getWidth(), info.raster().getHeight());
+  }
+
+  @Override
+  public void writeDecompressedFile(Path path, VectorQuantizationDecompressionInfo info) {
+    try {
+      ImageIO.write(info.img(), "bmp", path.toFile());
+    } catch (IOException e) {
+      e.printStackTrace();
+    }
   }
 }

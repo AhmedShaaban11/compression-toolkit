@@ -1,10 +1,10 @@
 package com.ahmed.compression.techniques;
 
 import com.ahmed.compression.techniques.information.Info;
-import com.ahmed.compression.techniques.information.lzw.LzwCompressedFileInfo;
-import com.ahmed.compression.techniques.information.lzw.LzwCompressionInfo;
-import com.ahmed.compression.techniques.information.lzw.LzwDecompressedFileInfo;
-import com.ahmed.compression.techniques.information.lzw.LzwDecompressionInfo;
+import com.ahmed.compression.techniques.information.lossless.lzw.LzwCompressedFileInfo;
+import com.ahmed.compression.techniques.information.lossless.lzw.LzwCompressionInfo;
+import com.ahmed.compression.techniques.information.lossless.lzw.LzwDecompressedFileInfo;
+import com.ahmed.compression.techniques.information.lossless.lzw.LzwDecompressionInfo;
 import com.ahmed.compression.techniques.io.LzwFile;
 import com.ahmed.compression.techniques.io.ReaderWriter;
 import com.ahmed.compression.techniques.tech.NewTechnique;

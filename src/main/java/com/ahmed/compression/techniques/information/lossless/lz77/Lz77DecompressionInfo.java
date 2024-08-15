@@ -1,4 +1,4 @@
-package com.ahmed.compression.techniques.information.lz77;
+package com.ahmed.compression.techniques.information.lossless.lz77;
 
 import com.ahmed.compression.techniques.information.Info;
 

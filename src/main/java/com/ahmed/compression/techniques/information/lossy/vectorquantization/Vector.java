@@ -1,4 +1,4 @@
-package com.ahmed.compression.techniques.tech.lossy.vectorquantization;
+package com.ahmed.compression.techniques.information.lossy.vectorquantization;
 
 public class Vector {
   private int[] pixels;
@@ -18,25 +18,25 @@ public class Vector {
     this.label = label;
   }
 
-  public int getLabel() {
+  public int label() {
     return label;
   }
 
-  public int getPixel(int idx) {
+  public int pixel(int idx) {
     return pixels[idx];
   }
 
-  public int[] getPixels() { return pixels; }
+  public int[] pixels() { return pixels; }
 
   public int distanceTo(Vector v) {
     int sum = 0;
     for (int i = 0; i < pixels.length; ++i) {
-      sum += Math.abs(pixels[i] - v.getPixel(i));
+      sum += Math.abs(pixels[i] - v.pixel(i));
     }
     return sum;
   }
 
-  public int getSize() { return pixels.length; }
+  public int size() { return pixels.length; }
 
   public void shiftUp() {
     for (int i = 0; i < pixels.length; ++i) {

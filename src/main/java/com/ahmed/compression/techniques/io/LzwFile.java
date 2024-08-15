@@ -1,15 +1,14 @@
 package com.ahmed.compression.techniques.io;
 
-import com.ahmed.compression.techniques.information.lzw.LzwCompressedFileInfo;
-import com.ahmed.compression.techniques.information.lzw.LzwCompressionInfo;
-import com.ahmed.compression.techniques.information.lzw.LzwDecompressedFileInfo;
-import com.ahmed.compression.techniques.information.lzw.LzwDecompressionInfo;
+import com.ahmed.compression.techniques.information.lossless.lzw.LzwCompressedFileInfo;
+import com.ahmed.compression.techniques.information.lossless.lzw.LzwCompressionInfo;
+import com.ahmed.compression.techniques.information.lossless.lzw.LzwDecompressedFileInfo;
+import com.ahmed.compression.techniques.information.lossless.lzw.LzwDecompressionInfo;
 
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
-import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.ArrayList;
 

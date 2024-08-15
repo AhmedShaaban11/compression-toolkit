@@ -3,7 +3,7 @@ package com.ahmed.compression.techniques.tech;
 import com.ahmed.compression.techniques.tech.lossless.Lz77;
 import com.ahmed.compression.techniques.tech.lossless.Lzw;
 import com.ahmed.compression.techniques.tech.lossless.StandardHuffman;
-import com.ahmed.compression.techniques.tech.lossy.vectorquantization.VectorQuantization;
+import com.ahmed.compression.techniques.tech.lossy.VectorQuantization;
 import com.ahmed.compression.techniques.tech.lossy.prediction.TwoDPrediction;
 
 public class TechniqueFactory {

@@ -1,9 +1,9 @@
 package com.ahmed.compression.techniques.io;
 
-import com.ahmed.compression.techniques.information.standardhuffman.StandardHuffmanCompressedFileInfo;
-import com.ahmed.compression.techniques.information.standardhuffman.StandardHuffmanCompressionInfo;
-import com.ahmed.compression.techniques.information.standardhuffman.StandardHuffmanDecompressedFileInfo;
-import com.ahmed.compression.techniques.information.standardhuffman.StandardHuffmanDecompressionInfo;
+import com.ahmed.compression.techniques.information.lossless.standardhuffman.StandardHuffmanCompressedFileInfo;
+import com.ahmed.compression.techniques.information.lossless.standardhuffman.StandardHuffmanCompressionInfo;
+import com.ahmed.compression.techniques.information.lossless.standardhuffman.StandardHuffmanDecompressedFileInfo;
+import com.ahmed.compression.techniques.information.lossless.standardhuffman.StandardHuffmanDecompressionInfo;
 
 import java.nio.file.Path;
 import java.util.HashMap;

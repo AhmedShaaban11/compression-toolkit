@@ -1,6 +1,6 @@
 package com.ahmed.compression.techniques.tech.lossless;
 
-import com.ahmed.compression.techniques.information.standardhuffman.*;
+import com.ahmed.compression.techniques.information.lossless.standardhuffman.*;
 import com.ahmed.compression.techniques.tech.NewTechnique;
 import com.ahmed.compression.techniques.tech.Technique;
 import com.ahmed.compression.techniques.io.StandardHuffmanFile;

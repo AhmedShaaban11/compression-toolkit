@@ -2,7 +2,7 @@ package com.ahmed.compression.techniques;
 
 import com.ahmed.compression.techniques.tech.Technique;
 import com.ahmed.compression.techniques.tech.TechniqueFactory;
-import com.ahmed.compression.techniques.tech.lossy.vectorquantization.VectorQuantization;
+import com.ahmed.compression.techniques.tech.lossy.VectorQuantization;
 import javafx.fxml.FXML;
 import javafx.scene.control.ChoiceBox;
 import javafx.scene.control.TextField;

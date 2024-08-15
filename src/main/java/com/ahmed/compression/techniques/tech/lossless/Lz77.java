@@ -1,6 +1,6 @@
 package com.ahmed.compression.techniques.tech.lossless;
 
-import com.ahmed.compression.techniques.information.lz77.*;
+import com.ahmed.compression.techniques.information.lossless.lz77.*;
 import com.ahmed.compression.techniques.io.Lz77File;
 import com.ahmed.compression.techniques.tech.NewTechnique;
 import com.ahmed.compression.techniques.tech.Technique;

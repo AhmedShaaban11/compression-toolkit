@@ -1,6 +1,6 @@
 package com.ahmed.compression.techniques.io;
 
-import com.ahmed.compression.techniques.information.lz77.*;
+import com.ahmed.compression.techniques.information.lossless.lz77.*;
 
 import java.io.FileWriter;
 import java.io.IOException;
