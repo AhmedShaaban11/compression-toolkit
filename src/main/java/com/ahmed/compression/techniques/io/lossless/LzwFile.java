@@ -1,9 +1,11 @@
-package com.ahmed.compression.techniques.io;
+package com.ahmed.compression.techniques.io.lossless;
 
 import com.ahmed.compression.techniques.information.lossless.lzw.LzwCompressedFileInfo;
 import com.ahmed.compression.techniques.information.lossless.lzw.LzwCompressionInfo;
 import com.ahmed.compression.techniques.information.lossless.lzw.LzwDecompressedFileInfo;
 import com.ahmed.compression.techniques.information.lossless.lzw.LzwDecompressionInfo;
+import com.ahmed.compression.techniques.io.BinaryFile;
+import com.ahmed.compression.techniques.io.ReaderWriter;
 
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
@@ -26,20 +28,6 @@ public class LzwFile extends BinaryFile implements ReaderWriter<LzwCompressedFil
     return binary_nums.toString();
   }
 
-  public void writeTags(String path, int tagBits, ArrayList<Integer> nums) {
-    try {
-      String bits = convertTagsToBits(nums, tagBits);
-      byte[] bytes = convertBitsToBytes(bits);
-      DataOutputStream outputStream = new DataOutputStream(new FileOutputStream(path));
-      outputStream.write((byte) tagBits);
-      outputStream.write(bytes);
-      outputStream.close();
-    } catch (Exception e) {
-      System.out.println(e.getMessage());
-      e.printStackTrace();
-    }
-  }
-
   private ArrayList<Integer> convertBitsToTags(String bits, int tagBits) {
     ArrayList<Integer> nums = new ArrayList<>();
     for (int i = 0; i < bits.length(); i += tagBits) {
@@ -50,10 +38,11 @@ public class LzwFile extends BinaryFile implements ReaderWriter<LzwCompressedFil
     return nums;
   }
 
-  public ArrayList<Integer> readTags(String path) {
+  @Override
+  public LzwCompressedFileInfo readCompressedFile(Path path) {
     ArrayList<Integer> nums = new ArrayList<>();
     try {
-      DataInputStream inputStream = new DataInputStream(new FileInputStream(path));
+      DataInputStream inputStream = new DataInputStream(new FileInputStream(path.toString()));
       int tagBits = inputStream.readByte();
       byte[] bytes = inputStream.readAllBytes();
       inputStream.close();
@@ -63,12 +52,7 @@ public class LzwFile extends BinaryFile implements ReaderWriter<LzwCompressedFil
       System.out.println(e.getMessage());
       e.printStackTrace();
     }
-    return nums;
-  }
-
-  @Override
-  public LzwCompressedFileInfo readCompressedFile(Path path) {
-    return new LzwCompressedFileInfo(readTags(path.toString()));
+    return new LzwCompressedFileInfo(nums);
   }
 
   @Override
@@ -78,7 +62,17 @@ public class LzwFile extends BinaryFile implements ReaderWriter<LzwCompressedFil
 
   @Override
   public void writeCompressedFile(Path path, LzwCompressionInfo info) {
-    writeTags(path.toString(), info.tagBits(), info.tags());
+    try {
+      String bits = convertTagsToBits(info.tags(), info.tagBits());
+      byte[] bytes = convertBitsToBytes(bits);
+      DataOutputStream outputStream = new DataOutputStream(new FileOutputStream(path.toString()));
+      outputStream.write((byte) info.tagBits());
+      outputStream.write(bytes);
+      outputStream.close();
+    } catch (Exception e) {
+      System.out.println(e.getMessage());
+      e.printStackTrace();
+    }
   }
 
   @Override

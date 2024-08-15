@@ -1,10 +1,12 @@
-package com.ahmed.compression.techniques.io;
+package com.ahmed.compression.techniques.io.lossy;
 
 import com.ahmed.compression.techniques.information.lossy.vectorquantization.VectorQuantizationCompressedFileInfo;
 import com.ahmed.compression.techniques.information.lossy.vectorquantization.VectorQuantizationCompressionInfo;
 import com.ahmed.compression.techniques.information.lossy.vectorquantization.VectorQuantizationDecompressedFileInfo;
 import com.ahmed.compression.techniques.information.lossy.vectorquantization.VectorQuantizationDecompressionInfo;
 import com.ahmed.compression.techniques.information.lossy.vectorquantization.Vector;
+import com.ahmed.compression.techniques.io.BinaryFile;
+import com.ahmed.compression.techniques.io.ReaderWriter;
 
 import javax.imageio.ImageIO;
 import java.awt.image.BufferedImage;
@@ -26,7 +28,7 @@ public class VectorQuantizationFile extends BinaryFile implements ReaderWriter<V
     return bits.toString();
   }
 
-  private String writeImage(ArrayList<Vector> vectors, int imgWidth, int imgHeight, int codebooksDigitsCount) {
+  private String imgToBits(ArrayList<Vector> vectors, int imgWidth, int imgHeight, int codebooksDigitsCount) {
     StringBuilder bits = new StringBuilder();
     bits.append(intToBinaryString(imgWidth, 16));
     bits.append(intToBinaryString(imgHeight, 16));
@@ -37,18 +39,9 @@ public class VectorQuantizationFile extends BinaryFile implements ReaderWriter<V
     return bits.toString();
   }
 
-  public void writeImg(String path, boolean isGrey, ArrayList<Vector> vectors, ArrayList<Vector> codebooks, int vecWidth, int vecHeight, int imgWidth, int imgHeight) {
-    int codebooksDigitsCount = (int) Math.ceil(Math.log(codebooks.size()) / Math.log(2));
-    String bits = "";
-    bits += isGrey ? "1" : "0";
-    bits += writeCodeBooks(codebooks, vecWidth, vecHeight);
-    bits += writeImage(vectors, imgWidth, imgHeight, codebooksDigitsCount);
-    byte[] bytes = convertBitsToBytes(bits);
-    writeBinaryFile(Path.of(path), bytes);
-  }
-
-  public VectorQuantizationCompressedFileInfo readImg(String path) {
-    byte[] bytes = readBinaryFile(Path.of(path));
+  @Override
+  public VectorQuantizationCompressedFileInfo readCompressedFile(Path path) {
+    byte[] bytes = readBinaryFile(path);
     String bits = convertBytesToBits(bytes);
     int bitsIdx = 0;
     boolean isGrey = Integer.parseInt(bits.substring(bitsIdx, bitsIdx += 1), 2) == 1;
@@ -76,26 +69,26 @@ public class VectorQuantizationFile extends BinaryFile implements ReaderWriter<V
   }
 
   @Override
-  public VectorQuantizationCompressedFileInfo readCompressedFile(Path path) {
-    return readImg(path.toString());
-  }
-
-  @Override
   public VectorQuantizationDecompressedFileInfo readDecompressedFile(Path path) {
     BufferedImage img = null;
     try {
       img = ImageIO.read(path.toFile());
-      return new VectorQuantizationDecompressedFileInfo(img.getRaster(), 4, 4, 3);
+      return new VectorQuantizationDecompressedFileInfo(img.getRaster());
     } catch (IOException e) {
       e.printStackTrace();
     }
-    // TODO: Take user input for vecWidth, vecHeight, and codebooksLevels
-    return new VectorQuantizationDecompressedFileInfo(null, 4, 4, 3);
+    return new VectorQuantizationDecompressedFileInfo(null);
   }
 
   @Override
   public void writeCompressedFile(Path path, VectorQuantizationCompressionInfo info) {
-    writeImg(path.toString(), info.isGrey(), info.vectors(), info.codebooks(), info.vecWidth(), info.vecHeight(), info.raster().getWidth(), info.raster().getHeight());
+    int codebooksDigitsCount = (int) Math.ceil(Math.log(info.codebooks().size()) / Math.log(2));
+    String bits = "";
+    bits += info.isGrey() ? "1" : "0";
+    bits += writeCodeBooks(info.codebooks(), info.vecWidth(), info.vecHeight());
+    bits += imgToBits(info.vectors(), info.raster().getWidth(), info.raster().getHeight(), codebooksDigitsCount);
+    byte[] bytes = convertBitsToBytes(bits);
+    writeBinaryFile(path, bytes);
   }
 
   @Override

@@ -4,18 +4,13 @@ import com.ahmed.compression.techniques.information.lossy.twodprediction.TwoDPre
 import com.ahmed.compression.techniques.information.lossy.twodprediction.TwoDPredictionCompressionInfo;
 import com.ahmed.compression.techniques.information.lossy.twodprediction.TwoDPredictionDecompressedFileInfo;
 import com.ahmed.compression.techniques.information.lossy.twodprediction.TwoDPredictionDecompressionInfo;
-import com.ahmed.compression.techniques.tech.NewTechnique;
 import com.ahmed.compression.techniques.tech.Technique;
-import com.ahmed.compression.techniques.io.TwoDPredictionFile;
 
-import javax.imageio.ImageIO;
 import java.awt.image.BufferedImage;
 import java.awt.image.Raster;
 import java.awt.image.WritableRaster;
-import java.io.File;
-import java.nio.file.Path;
 
-public class TwoDPrediction implements Technique, NewTechnique<TwoDPredictionCompressedFileInfo, TwoDPredictionDecompressedFileInfo, TwoDPredictionCompressionInfo, TwoDPredictionDecompressionInfo> {
+public class TwoDPrediction implements Technique<TwoDPredictionCompressedFileInfo, TwoDPredictionDecompressedFileInfo, TwoDPredictionCompressionInfo, TwoDPredictionDecompressionInfo> {
   private static final int QUANTIZE_BITS_COUNT = 8;
   private static final int MIN_DIFFERENCE = -255;
   private static final int MAX_DIFFERENCE = 255;
@@ -59,14 +54,6 @@ public class TwoDPrediction implements Technique, NewTechnique<TwoDPredictionCom
     }
   }
 
-  @Override
-  public void compress(String inPath, String outPath) {
-    TwoDPredictionFile file = new TwoDPredictionFile();
-    TwoDPredictionDecompressedFileInfo decompressedFileInfo = file.readDecompressedFile(Path.of(inPath));
-    TwoDPredictionCompressionInfo fileInfo = compress(decompressedFileInfo);
-    file.writeCompressedFile(Path.of(outPath), fileInfo);
-  }
-
   private void deQuantize(int[][] predictionArr, int bytes, int quantizationBitsCount) {
     double levels = Math.pow(2, quantizationBitsCount);
     int step = (int) Math.ceil((MAX_DIFFERENCE - MIN_DIFFERENCE) / levels);
@@ -99,14 +86,6 @@ public class TwoDPrediction implements Technique, NewTechnique<TwoDPredictionCom
   }
 
   @Override
-  public void decompress(String inPath, String outPath) {
-    TwoDPredictionFile file = new TwoDPredictionFile();
-    TwoDPredictionCompressedFileInfo fileInfo = file.readCompressedFile(Path.of(inPath));
-    var decompressionInfo = decompress(fileInfo);
-    file.writeDecompressedFile(Path.of(outPath), decompressionInfo);
-  }
-
-  @Override
   public TwoDPredictionCompressionInfo compress(TwoDPredictionDecompressedFileInfo fileInfo) {
     int[][] predictionArr = getPredictionArr(fileInfo.raster(), fileInfo.colorBytes());
     computePredictDifference(predictionArr, fileInfo.colorBytes());
@@ -135,11 +114,5 @@ public class TwoDPrediction implements Technique, NewTechnique<TwoDPredictionCom
       raster.setPixels(0, i, fileInfo.imgWidth(), 1, fileInfo.prediction()[i]);
     }
     return new TwoDPredictionDecompressionInfo(img);
-  }
-
-  public static void main(String[] args) {
-    TwoDPrediction twoDPrediction = new TwoDPrediction();
-    twoDPrediction.compress("img/bmp/fruit.bmp", "img/bmp/output.bin");
-    twoDPrediction.decompress("img/bmp/output.bin", "img/bmp/output.bmp");
   }
 }

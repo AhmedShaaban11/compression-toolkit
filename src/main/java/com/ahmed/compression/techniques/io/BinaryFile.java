@@ -14,7 +14,7 @@ abstract public class BinaryFile {
     return data;
   }
 
-  public void writeRegularFile(Path path, String data) {
+  protected void writeRegularFile(Path path, String data) {
     try {
       Files.writeString(path, data);
     } catch (Exception e) {
@@ -22,7 +22,7 @@ abstract public class BinaryFile {
     }
   }
 
-  public byte[] readBinaryFile(Path path) {
+  protected byte[] readBinaryFile(Path path) {
     byte[] data = null;
     try {
       data = Files.readAllBytes(path);
@@ -32,7 +32,7 @@ abstract public class BinaryFile {
     return data;
   }
 
-  public void writeBinaryFile(Path path, byte[] data) {
+  protected void writeBinaryFile(Path path, byte[] data) {
     try {
       Files.write(path, data);
     } catch (Exception e) {
@@ -40,7 +40,7 @@ abstract public class BinaryFile {
     }
   }
 
-  public static String intToBinaryString(int n, int digitsCount) {
+  protected static String intToBinaryString(int n, int digitsCount) {
     String bin = Integer.toBinaryString(n);
     if (bin.length() < digitsCount) {
       bin = "0".repeat(digitsCount - bin.length()) + bin;

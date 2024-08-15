@@ -20,4 +20,10 @@ module com.ahmed {
   exports com.ahmed.compression.techniques.information.lossless.standardhuffman;
   exports com.ahmed.compression.techniques.information.lossy.vectorquantization;
   exports com.ahmed.compression.techniques.information.lossy.twodprediction;
+  exports com.ahmed.compression.techniques.io.lossless;
+  opens com.ahmed.compression.techniques.io.lossless to javafx.fxml;
+  exports com.ahmed.compression.techniques.io.lossy;
+  opens com.ahmed.compression.techniques.io.lossy to javafx.fxml;
+  exports com.ahmed.compression.techniques.facade;
+  opens com.ahmed.compression.techniques.facade to javafx.fxml;
 }

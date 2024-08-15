@@ -1,9 +1,11 @@
-package com.ahmed.compression.techniques.io;
+package com.ahmed.compression.techniques.io.lossy;
 
 import com.ahmed.compression.techniques.information.lossy.twodprediction.TwoDPredictionCompressedFileInfo;
 import com.ahmed.compression.techniques.information.lossy.twodprediction.TwoDPredictionCompressionInfo;
 import com.ahmed.compression.techniques.information.lossy.twodprediction.TwoDPredictionDecompressedFileInfo;
 import com.ahmed.compression.techniques.information.lossy.twodprediction.TwoDPredictionDecompressionInfo;
+import com.ahmed.compression.techniques.io.BinaryFile;
+import com.ahmed.compression.techniques.io.ReaderWriter;
 
 import javax.imageio.ImageIO;
 import java.awt.image.BufferedImage;
@@ -11,7 +13,6 @@ import java.io.IOException;
 import java.nio.file.Path;
 
 public class TwoDPredictionFile extends BinaryFile implements ReaderWriter<TwoDPredictionCompressedFileInfo, TwoDPredictionDecompressedFileInfo, TwoDPredictionCompressionInfo, TwoDPredictionDecompressionInfo> {
-
   @Override
   public TwoDPredictionCompressedFileInfo readCompressedFile(Path path) {
     byte[] bytes = readBinaryFile(path);
@@ -49,7 +50,7 @@ public class TwoDPredictionFile extends BinaryFile implements ReaderWriter<TwoDP
     } catch (IOException e) {
       e.printStackTrace();
     }
-    return null;
+    return new TwoDPredictionDecompressedFileInfo(null, 0);
   }
 
   @Override

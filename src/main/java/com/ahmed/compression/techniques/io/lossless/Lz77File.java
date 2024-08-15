@@ -1,6 +1,8 @@
-package com.ahmed.compression.techniques.io;
+package com.ahmed.compression.techniques.io.lossless;
 
 import com.ahmed.compression.techniques.information.lossless.lz77.*;
+import com.ahmed.compression.techniques.io.BinaryFile;
+import com.ahmed.compression.techniques.io.ReaderWriter;
 
 import java.io.FileWriter;
 import java.io.IOException;

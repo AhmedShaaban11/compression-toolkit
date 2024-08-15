@@ -1,24 +1,21 @@
 package com.ahmed.compression.techniques.tech.lossy;
 
 import com.ahmed.compression.techniques.information.lossy.vectorquantization.*;
-import com.ahmed.compression.techniques.io.VectorQuantizationFile;
-import com.ahmed.compression.techniques.tech.NewTechnique;
 import com.ahmed.compression.techniques.tech.Technique;
 
-import javax.imageio.ImageIO;
 import java.awt.image.BufferedImage;
 import java.awt.image.Raster;
 import java.awt.image.WritableRaster;
-import java.io.File;
-import java.io.IOException;
-import java.io.Serializable;
-import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 import java.util.Stack;
 
-public class VectorQuantization implements Technique, NewTechnique<VectorQuantizationCompressedFileInfo, VectorQuantizationDecompressedFileInfo, VectorQuantizationCompressionInfo, VectorQuantizationDecompressionInfo> {
+public class VectorQuantization implements Technique<VectorQuantizationCompressedFileInfo, VectorQuantizationDecompressedFileInfo, VectorQuantizationCompressionInfo, VectorQuantizationDecompressionInfo> {
+  // TODO: Change the values of VECTOR_WIDTH, VECTOR_HEIGHT, and CODEBOOKS_LEVELS to be fileInfo.etc()
+  private static final int VECTOR_WIDTH = 4;
+  private static final int VECTOR_HEIGHT = 4;
+  private static final int CODEBOOKS_LEVELS = 3;
+
   private ArrayList<Vector> vectorize(Raster raster, int vecWidth, int vecHeight, boolean isGrey) {
     ArrayList<Vector> vectors = new ArrayList<>();
     for (int x = 0; x < raster.getWidth(); x += vecWidth) {
@@ -112,55 +109,16 @@ public class VectorQuantization implements Technique, NewTechnique<VectorQuantiz
   }
 
   @Override
-  public void compress(String inputFilePath, String outputFilePath, Map<String, Object> props) {
-    int vecWidth = (int) props.getOrDefault("vecWidth", 1);
-    int vecHeight = (int) props.getOrDefault("vecHeight", 1);
-    int codebooksLevels = (int) props.getOrDefault("codebooksLevels", 1);
-    try {
-      BufferedImage img = ImageIO.read(new File(inputFilePath));
-      Raster raster = img.getRaster();
-      boolean isGrey = img.getType() == BufferedImage.TYPE_BYTE_GRAY;
-      VectorQuantizationDecompressedFileInfo fileInfo = new VectorQuantizationDecompressedFileInfo(raster, vecWidth, vecHeight, codebooksLevels);
-      VectorQuantizationCompressionInfo compressionInfo = compress(fileInfo);
-      VectorQuantizationFile vqFile = new VectorQuantizationFile();
-      vqFile.writeImg(outputFilePath, isGrey, compressionInfo.vectors(), compressionInfo.codebooks(),
-          vecWidth, vecHeight, raster.getWidth(), raster.getHeight());
-    } catch (IOException e) {
-      e.printStackTrace();
-    }
-  }
-
-  @Override
-  public void decompress(String inputFilePath, String outputFilePath) {
-    try {
-      VectorQuantizationFile vqFile = new VectorQuantizationFile();
-      VectorQuantizationDecompressionInfo decompressionInfo = decompress(vqFile.readCompressedFile(Path.of(inputFilePath)));
-      ImageIO.write(decompressionInfo.img(), "bmp", new File(outputFilePath));
-    } catch (IOException e) {
-      e.printStackTrace();
-    }
-  }
-
-  @Override
-  public Map<String, Serializable> getProps() {
-      return Map.of(
-          "vecWidth", Integer.class,
-          "vecHeight", Integer.class,
-          "codebooksLevels", Integer.class
-      );
-    }
-
-  @Override
   public VectorQuantizationCompressionInfo compress(VectorQuantizationDecompressedFileInfo fileInfo) {
-    ArrayList<Vector> vectors = vectorize(fileInfo.raster(), fileInfo.vecWidth(), fileInfo.vecHeight(), fileInfo.isGrey());
-    ArrayList<ArrayList<Vector>> clusters = clusterize(vectors, fileInfo.vecWidth(), fileInfo.vecHeight(), fileInfo.codebooksLevels(), fileInfo.isGrey());
-    ArrayList<Vector> codebooks = generateCodebooks(clusters, fileInfo.vecWidth(), fileInfo.vecHeight(), fileInfo.isGrey());
+    ArrayList<Vector> vectors = vectorize(fileInfo.raster(), VECTOR_WIDTH, VECTOR_HEIGHT, fileInfo.isGrey());
+    ArrayList<ArrayList<Vector>> clusters = clusterize(vectors, VECTOR_WIDTH, VECTOR_HEIGHT, CODEBOOKS_LEVELS, fileInfo.isGrey());
+    ArrayList<Vector> codebooks = generateCodebooks(clusters, VECTOR_WIDTH, VECTOR_HEIGHT, fileInfo.isGrey());
     for (int i = 0; i < clusters.size(); ++i) {
       for (Vector vec : clusters.get(i)) {
         vec.setLabel(i);
       }
     }
-    return new VectorQuantizationCompressionInfo(fileInfo.raster(), fileInfo.vecWidth(), fileInfo.vecHeight(), vectors, codebooks);
+    return new VectorQuantizationCompressionInfo(fileInfo.raster(), VECTOR_WIDTH, VECTOR_HEIGHT, vectors, codebooks);
   }
 
   @Override
@@ -168,51 +126,15 @@ public class VectorQuantization implements Technique, NewTechnique<VectorQuantiz
     BufferedImage img = new BufferedImage(fileInfo.imgWidth(), fileInfo.imgHeight(), fileInfo.isGrey() ? BufferedImage.TYPE_BYTE_GRAY : BufferedImage.TYPE_3BYTE_BGR);
     WritableRaster raster = img.getRaster();
     int labelIdx = 0;
-    for (int x = 0; x < fileInfo.imgWidth(); x += fileInfo.vecWidth()) {
-      for (int y = 0; y < fileInfo.imgHeight(); y += fileInfo.vecHeight()) {
+    for (int x = 0; x < fileInfo.imgWidth(); x += VECTOR_WIDTH) {
+      for (int y = 0; y < fileInfo.imgHeight(); y += VECTOR_HEIGHT) {
         int label = fileInfo.labels().get(labelIdx++);
         Vector codebook = fileInfo.codebooks().get(label);
-        int w = Math.min(fileInfo.vecWidth(), fileInfo.imgWidth() - x);
-        int h = Math.min(fileInfo.vecHeight(), fileInfo.imgHeight() - y);
+        int w = Math.min(VECTOR_WIDTH, fileInfo.imgWidth() - x);
+        int h = Math.min(VECTOR_HEIGHT, fileInfo.imgHeight() - y);
         raster.setPixels(x, y, w, h, codebook.pixels());
       }
     }
     return new VectorQuantizationDecompressionInfo(img);
   }
 }
-
-//  private void vectorsToImg(ArrayList<Vector> vectors, int imgWidth, int imgHeight) {
-//    int vecIdx = 0;
-//    BufferedImage img = new BufferedImage(imgWidth, imgHeight, BufferedImage.TYPE_BYTE_GRAY);
-//    WritableRaster raster = img.getRaster();
-//    for (int x = 0; x < imgWidth; x += 2) {
-//      for (int y = 0; y < imgHeight; y += 2) {
-//        Vector vec = vectors.get(vecIdx++);
-//        int w = Math.min(2, 256 - x);
-//        int h = Math.min(2, 256 - y);
-//        raster.setPixels(x, y, w, h, vec.pixels());
-//      }
-//    }
-//    try {
-//      ImageIO.write(img, "bmp", new File("img/bmp/output.bmp"));
-//    } catch (Exception e) {
-//      e.printStackTrace();
-//    }
-//  }
-//
-//  private BufferedImage rgbToGreyImg(BufferedImage img) {
-//    BufferedImage greyImg = new BufferedImage(img.getWidth(), img.getHeight(), BufferedImage.TYPE_BYTE_GRAY);
-//    for (int x = 0; x < img.getWidth(); ++x) {
-//      for (int y = 0; y < img.getHeight(); ++y) {
-//        Color rgbColor = new Color(img.getRGB(x, y));
-//        int r = rgbColor.getRed();
-//        int g = rgbColor.getGreen();
-//        int b = rgbColor.getBlue();
-//        int grey = (r + g + b) / 3;
-//        Color greyColor = new Color(grey, grey, grey);
-//        greyImg.setRGB(x, y, greyColor.getRGB());
-//      }
-//    }
-//    return greyImg;
-//  }
-

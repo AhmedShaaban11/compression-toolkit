@@ -1,8 +1,7 @@
 package com.ahmed.compression.techniques;
 
-import com.ahmed.compression.techniques.tech.Technique;
-import com.ahmed.compression.techniques.tech.TechniqueFactory;
-import com.ahmed.compression.techniques.tech.lossy.VectorQuantization;
+import com.ahmed.compression.techniques.facade.Facade;
+import com.ahmed.compression.techniques.facade.FacadeFactory;
 import javafx.fxml.FXML;
 import javafx.scene.control.ChoiceBox;
 import javafx.scene.control.TextField;
@@ -12,12 +11,10 @@ import javafx.stage.Stage;
 
 import java.io.File;
 import java.nio.file.Path;
-import java.util.HashMap;
-import java.util.Map;
 
 public class AppController {
   @FXML
-  public ChoiceBox choiceBox;
+  public ChoiceBox<?> choiceBox;
 
   @FXML
   public TextField vecWidth;
@@ -31,10 +28,10 @@ public class AppController {
   @FXML
   public FlowPane vectorQuantizationPane;
 
-  private Technique getCurrentTechnique() {
+  private Facade<?, ?, ?, ?, ?, ?> getCurrentFacade() {
     String techniqueName = choiceBox.getValue().toString();
-    TechniqueFactory techniqueFactory = new TechniqueFactory();
-    return techniqueFactory.createTechnique(techniqueName);
+    FacadeFactory facadeFactory = new FacadeFactory();
+    return facadeFactory.getFacade(techniqueName);
   }
 
   private Path chooseFile(String title, boolean isSave) {
@@ -57,26 +54,15 @@ public class AppController {
   public void compressButtonAction() {
     Path inputPath = chooseFile("Select Input File for Compression", false);
     Path outputPath = chooseFile("Select Output File for Compression", true);
-    Technique tech = getCurrentTechnique();
-    if (tech instanceof VectorQuantization vectorQuantization) {
-      int vecWidth = Integer.parseInt(this.vecWidth.getText());
-      int vecHeight = Integer.parseInt(this.vecHeight.getText());
-      int codebooksLevels = Integer.parseInt(this.codebooksLevels.getText());
-      Map<String, Object> props = new HashMap<>();
-      props.put("vecWidth", vecWidth);
-      props.put("vecHeight", vecHeight);
-      props.put("codebooksLevels", codebooksLevels);
-      vectorQuantization.compress(inputPath.toString(), outputPath.toString(), props);
-      return;
-    }
-    tech.compress(inputPath.toString(), outputPath.toString());
+    Facade<?, ?, ?, ?, ?, ?> facade = getCurrentFacade();
+    facade.compress(inputPath, outputPath);
   }
 
   @FXML
   public void decompressButtonAction() {
     Path inputPath = chooseFile("Select Input File for Decompression", false);
     Path outputPath = chooseFile("Select Output File for Decompression", true);
-    Technique tech = getCurrentTechnique();
-    tech.decompress(inputPath.toString(), outputPath.toString());
+    Facade<?, ?, ?, ?, ?, ?> facade = getCurrentFacade();
+    facade.decompress(inputPath, outputPath);
   }
 }
