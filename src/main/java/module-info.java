@@ -19,4 +19,5 @@ module com.ahmed {
   exports com.ahmed.compression.techniques.information;
   exports com.ahmed.compression.techniques.information.lz77;
   exports com.ahmed.compression.techniques.information.lzw;
+  exports com.ahmed.compression.techniques.information.standardhuffman;
 }

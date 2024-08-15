@@ -1,13 +1,17 @@
 package com.ahmed.compression.techniques.io;
 
-import com.ahmed.compression.techniques.tech.lossless.StandardHuffmanCompressResult;
+import com.ahmed.compression.techniques.information.standardhuffman.StandardHuffmanCompressedFileInfo;
+import com.ahmed.compression.techniques.information.standardhuffman.StandardHuffmanCompressionInfo;
+import com.ahmed.compression.techniques.information.standardhuffman.StandardHuffmanDecompressedFileInfo;
+import com.ahmed.compression.techniques.information.standardhuffman.StandardHuffmanDecompressionInfo;
 
 import java.nio.file.Path;
 import java.util.HashMap;
+import java.util.Map;
 
-public class StandardHuffmanFile extends BinaryFile {
+public class StandardHuffmanFile extends BinaryFile implements ReaderWriter<StandardHuffmanCompressedFileInfo, StandardHuffmanDecompressedFileInfo, StandardHuffmanCompressionInfo, StandardHuffmanDecompressionInfo> {
 
-  public void writeStandardHuffmanFile(Path path, String compressedStream, HashMap<Character, String> huffmanCodes) {
+  public void writeStandardHuffmanFile(Path path, String compressedStream, Map<Character, String> huffmanCodes) {
     StringBuilder rows = new StringBuilder();
     for (var entry : huffmanCodes.entrySet()) {
       String charBits = intToBinaryString(entry.getKey(), 8);
@@ -21,7 +25,7 @@ public class StandardHuffmanFile extends BinaryFile {
     writeBinaryFile(path, bytes);
   }
 
-  public StandardHuffmanCompressResult readStandardHuffmanFile(Path path) {
+  public StandardHuffmanCompressedFileInfo readStandardHuffmanFile(Path path) {
     byte[] bytes = readBinaryFile(path);
     String bits = convertBytesToBits(bytes);
     HashMap<String, Character> huffmanCodes = new HashMap<>();
@@ -40,6 +44,26 @@ public class StandardHuffmanFile extends BinaryFile {
     }
     // Read compressed stream
     String compressedStream = bits.substring(i);
-    return new StandardHuffmanCompressResult<>(compressedStream, huffmanCodes);
+    return new StandardHuffmanCompressedFileInfo(compressedStream, huffmanCodes);
+  }
+
+  @Override
+  public StandardHuffmanCompressedFileInfo readCompressedFile(Path path) {
+    return readStandardHuffmanFile(path);
+  }
+
+  @Override
+  public StandardHuffmanDecompressedFileInfo readDecompressedFile(Path path) {
+    return new StandardHuffmanDecompressedFileInfo(readRegularFile(path));
+  }
+
+  @Override
+  public void writeCompressedFile(Path path, StandardHuffmanCompressionInfo info) {
+    writeStandardHuffmanFile(path, info.compressedStream(), info.huffmanCodes());
+  }
+
+  @Override
+  public void writeDecompressedFile(Path path, StandardHuffmanDecompressionInfo info) {
+    writeRegularFile(path, info.data());
   }
 }
