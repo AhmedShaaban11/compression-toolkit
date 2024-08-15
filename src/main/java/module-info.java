@@ -17,5 +17,6 @@ module com.ahmed {
   exports com.ahmed.compression.techniques.tech.lossy.prediction;
   exports com.ahmed.compression.techniques.tech.lossy.vectorquantization;
   exports com.ahmed.compression.techniques.information;
+  exports com.ahmed.compression.techniques.information.lz77;
   exports com.ahmed.compression.techniques.information.lzw;
 }

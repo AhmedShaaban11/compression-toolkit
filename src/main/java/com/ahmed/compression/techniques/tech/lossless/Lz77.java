@@ -1,5 +1,8 @@
 package com.ahmed.compression.techniques.tech.lossless;
 
+import com.ahmed.compression.techniques.information.lz77.*;
+import com.ahmed.compression.techniques.io.Lz77File;
+import com.ahmed.compression.techniques.tech.NewTechnique;
 import com.ahmed.compression.techniques.tech.Technique;
 
 import java.io.FileWriter;
@@ -7,42 +10,13 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.ArrayList;
-import java.util.List;
 
-class Tag {
-  int position;
-  int length;
-  char nextChar;
+public class Lz77 implements Technique, NewTechnique<Lz77CompressedFileInfo, Lz77DecompressedFileInfo, Lz77CompressionInfo, Lz77DecompressionInfo> {
+  private Lz77File lz77File;
 
-  public Tag(int p, int l, char nc) {
-    position = p;
-    length = l;
-    nextChar = nc;
+  public Lz77() {
+    this.lz77File = new Lz77File();
   }
-
-  public Tag(String line) {
-    int i = 1;
-    String strPos = "", strLen = "";
-    for (; line.charAt(i) != ','; ++i) { strPos += line.charAt(i); }
-    for (++i; line.charAt(i) != ','; ++i) { strLen += line.charAt(i); }
-    position = Integer.parseInt(strPos);
-    length = Integer.parseInt(strLen);
-    nextChar = line.charAt(i + 1);
-  }
-
-  public String toString() {
-    return "<" + position + "," + length + "," + nextChar + ">";
-  }
-
-  public int getPosition() { return position; }
-
-  public int getLength() { return length; }
-
-  public char getNextChar() { return nextChar; }
-
-}
-
-public class Lz77 implements Technique {
 
   private boolean validRange(int i, int j, int k, int n) {
     return j + k < i && i + k < n;
@@ -74,11 +48,11 @@ public class Lz77 implements Technique {
     if (tags.isEmpty()) { return ""; }
     StringBuilder str = new StringBuilder();
     for (Tag tag : tags) {
-      int i = str.length() - tag.getPosition();
-      for (int j = 0; j < tag.getLength(); ++j) {
+      int i = str.length() - tag.position();
+      for (int j = 0; j < tag.length(); ++j) {
         str.append(str.charAt(i++));
       }
-      if (tag.getNextChar() != '\0') { str.append(tag.getNextChar()); }
+      if (tag.nextChar() != '\0') { str.append(tag.nextChar()); }
     }
     return str.toString();
   }
@@ -98,37 +72,12 @@ public class Lz77 implements Technique {
   }
 
   private String decompressFromFile(String path) {
-    try {
-      List<String> lines = Files.readAllLines(Path.of(path));
-      ArrayList<Tag> tags = new ArrayList<>();
-      for (String line : lines) {
-        // handle \n as the next character
-        if (!line.startsWith("<")) { continue; }
-        if (!line.endsWith(">")) { line += ">"; }
-        Tag tag = new Tag(line);
-        tags.add(tag);
-      }
-      return decompress(tags);
-    } catch (IOException e) {
-      System.out.println("ERROR: " + path + ": cannot be open");
-    } catch (NullPointerException e) {
-      System.out.println("ERROR: path parameter cannot be null");
-    }
-    return "";
+    var decompressionInfo = lz77File.readCompressedFile(Path.of(path));
+    return decompress(decompressionInfo.tags());
   }
 
   private void storeCompressAtFile(String path, ArrayList<Tag> tags) {
-    try {
-      FileWriter writer = new FileWriter(path);
-      for (Tag tag : tags) {
-        writer.write(tag.toString() + "\n");
-      }
-      writer.close();
-    } catch (IOException e) {
-      System.out.println("ERROR: " + path + ": cannot be open");
-    } catch (NullPointerException e) {
-      System.out.println("ERROR: path parameter cannot be null");
-    }
+    lz77File.writeCompressedFile(Path.of(path), new Lz77CompressionInfo(tags));
   }
 
   private void storeDecompressAtFile(String path, String decompressed) {
@@ -153,5 +102,17 @@ public class Lz77 implements Technique {
   public void decompress(String inputPath, String outputPath) {
     String decompressed = decompressFromFile(inputPath);
     storeDecompressAtFile(outputPath, decompressed);
+  }
+
+  @Override
+  public Lz77CompressionInfo compress(Lz77DecompressedFileInfo info) {
+    ArrayList<Tag> tags = compress(info.data());
+    return new Lz77CompressionInfo(tags);
+  }
+
+  @Override
+  public Lz77DecompressionInfo decompress(Lz77CompressedFileInfo info) {
+    String data = decompress(info.tags());
+    return new Lz77DecompressionInfo(data);
   }
 }
