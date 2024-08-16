@@ -1,13 +1,16 @@
 package com.ahmed.compression.techniques.tech;
 
-import com.ahmed.compression.techniques.information.Info;
+import com.ahmed.compression.techniques.info.CompressedFileInfo;
+import com.ahmed.compression.techniques.info.CompressionInfo;
+import com.ahmed.compression.techniques.info.DecompressedFileInfo;
+import com.ahmed.compression.techniques.info.DecompressionInfo;
 
 public interface Technique<
-    CompressedFileInfo extends Info,
-    DecompressedFileInfo extends Info,
-    CompressionInfo extends Info,
-    DecompressionInfo extends Info
+    CompressedFileInfoT extends CompressedFileInfo,
+    DecompressedFileInfoT extends DecompressedFileInfo,
+    CompressionInfoT extends CompressionInfo,
+    DecompressionInfoT extends DecompressionInfo
     > {
-  CompressionInfo compress(DecompressedFileInfo decompressedFileInfo);
-  DecompressionInfo decompress(CompressedFileInfo compressedFileInfo);
+  CompressionInfoT compress(DecompressedFileInfoT decompressedFileInfo);
+  DecompressionInfoT decompress(CompressedFileInfoT compressedFileInfo);
 }

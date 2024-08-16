@@ -1,17 +1,11 @@
 package com.ahmed.compression.techniques.tech.lossless;
 
-import com.ahmed.compression.techniques.information.lossless.lz77.*;
-import com.ahmed.compression.techniques.io.lossless.Lz77File;
+import com.ahmed.compression.techniques.info.lossless.lz77.*;
 import com.ahmed.compression.techniques.tech.Technique;
 
 import java.util.ArrayList;
 
 public class Lz77 implements Technique<Lz77CompressedFileInfo, Lz77DecompressedFileInfo, Lz77CompressionInfo, Lz77DecompressionInfo> {
-  private Lz77File lz77File;
-
-  public Lz77() {
-    this.lz77File = new Lz77File();
-  }
 
   private boolean validRange(int i, int j, int k, int n) {
     return j + k < i && i + k < n;

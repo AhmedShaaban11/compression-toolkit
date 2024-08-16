@@ -1,6 +1,6 @@
 package com.ahmed.compression.techniques.tech.lossless;
 
-import com.ahmed.compression.techniques.information.lossless.standardhuffman.*;
+import com.ahmed.compression.techniques.info.lossless.standardhuffman.*;
 import com.ahmed.compression.techniques.tech.Technique;
 
 import java.util.HashMap;

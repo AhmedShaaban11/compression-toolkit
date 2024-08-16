@@ -1,6 +1,6 @@
 package com.ahmed.compression.techniques.tech.lossy;
 
-import com.ahmed.compression.techniques.information.lossy.vectorquantization.*;
+import com.ahmed.compression.techniques.info.lossy.vectorquantization.*;
 import com.ahmed.compression.techniques.tech.Technique;
 
 import java.awt.image.BufferedImage;

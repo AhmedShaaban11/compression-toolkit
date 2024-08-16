@@ -1,17 +1,20 @@
 package com.ahmed.compression.techniques.io;
 
-import com.ahmed.compression.techniques.information.Info;
+import com.ahmed.compression.techniques.info.CompressedFileInfo;
+import com.ahmed.compression.techniques.info.CompressionInfo;
+import com.ahmed.compression.techniques.info.DecompressedFileInfo;
+import com.ahmed.compression.techniques.info.DecompressionInfo;
 
 import java.nio.file.Path;
 
 public interface ReaderWriter<
-    CompressedFileInfo extends Info,
-    DecompressedFileInfo extends Info,
-    CompressionInfo extends Info,
-    DecompressionInfo extends Info
+    CompressedFileInfoT extends CompressedFileInfo,
+    DecompressedFileInfoT extends DecompressedFileInfo,
+    CompressionInfoT extends CompressionInfo,
+    DecompressionInfoT extends DecompressionInfo
     > {
-  CompressedFileInfo readCompressedFile(Path path);
-  DecompressedFileInfo readDecompressedFile(Path path);
-  void writeCompressedFile(Path path, CompressionInfo compressionInfo);
-  void writeDecompressedFile(Path path, DecompressionInfo decompressionInfo);
+  CompressedFileInfoT readCompressedFile(Path path);
+  DecompressedFileInfoT readDecompressedFile(Path path);
+  void writeCompressedFile(Path path, CompressionInfoT compressionInfo);
+  void writeDecompressedFile(Path path, DecompressionInfoT decompressionInfo);
 }

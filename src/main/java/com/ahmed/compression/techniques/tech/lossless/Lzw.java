@@ -1,9 +1,9 @@
 package com.ahmed.compression.techniques.tech.lossless;
 
-import com.ahmed.compression.techniques.information.lossless.lzw.LzwCompressedFileInfo;
-import com.ahmed.compression.techniques.information.lossless.lzw.LzwCompressionInfo;
-import com.ahmed.compression.techniques.information.lossless.lzw.LzwDecompressedFileInfo;
-import com.ahmed.compression.techniques.information.lossless.lzw.LzwDecompressionInfo;
+import com.ahmed.compression.techniques.info.lossless.lzw.LzwCompressedFileInfo;
+import com.ahmed.compression.techniques.info.lossless.lzw.LzwCompressionInfo;
+import com.ahmed.compression.techniques.info.lossless.lzw.LzwDecompressedFileInfo;
+import com.ahmed.compression.techniques.info.lossless.lzw.LzwDecompressionInfo;
 import com.ahmed.compression.techniques.tech.Technique;
 
 import java.util.ArrayList;

@@ -1,9 +1,9 @@
 package com.ahmed.compression.techniques.tech.lossy;
 
-import com.ahmed.compression.techniques.information.lossy.twodprediction.TwoDPredictionCompressedFileInfo;
-import com.ahmed.compression.techniques.information.lossy.twodprediction.TwoDPredictionCompressionInfo;
-import com.ahmed.compression.techniques.information.lossy.twodprediction.TwoDPredictionDecompressedFileInfo;
-import com.ahmed.compression.techniques.information.lossy.twodprediction.TwoDPredictionDecompressionInfo;
+import com.ahmed.compression.techniques.info.lossy.twodprediction.TwoDPredictionCompressedFileInfo;
+import com.ahmed.compression.techniques.info.lossy.twodprediction.TwoDPredictionCompressionInfo;
+import com.ahmed.compression.techniques.info.lossy.twodprediction.TwoDPredictionDecompressedFileInfo;
+import com.ahmed.compression.techniques.info.lossy.twodprediction.TwoDPredictionDecompressionInfo;
 import com.ahmed.compression.techniques.tech.Technique;
 
 import java.awt.image.BufferedImage;
@@ -30,7 +30,7 @@ public class TwoDPrediction implements Technique<TwoDPredictionCompressedFileInf
         int A = predictionArr[i][j - bytes];
         int B = predictionArr[i - 1][j - bytes];
         int C = predictionArr[i - 1][j];
-        int prediction = 0;
+        int prediction;
         if (B <= Math.min(A, C)) {
           prediction = Math.max(A, C);
         } else if (B >= Math.max(A, C)) {
@@ -71,7 +71,7 @@ public class TwoDPrediction implements Technique<TwoDPredictionCompressedFileInf
         int A = predictionArr[i][j - bytes];
         int B = predictionArr[i - 1][j - bytes];
         int C = predictionArr[i - 1][j];
-        int prediction = 0;
+        int prediction;
         if (B <= Math.min(A, C)) {
           prediction = Math.max(A, C);
         } else if (B >= Math.max(A, C)) {

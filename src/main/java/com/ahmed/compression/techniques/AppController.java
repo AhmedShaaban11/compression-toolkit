@@ -43,11 +43,9 @@ public class AppController {
 
   @FXML
   public void choiceBoxAction() {
-    if (choiceBox.getValue().toString().equalsIgnoreCase("Vector Quantization")) {
-      vectorQuantizationPane.setVisible(true);
-    } else {
-      vectorQuantizationPane.setVisible(false);
-    }
+    boolean isChoiceOnVectorQuantization = choiceBox.getValue().toString().equalsIgnoreCase("Vector Quantization");
+//    vectorQuantizationPane.setVisible(isChoiceOnVectorQuantization); // TODO: Change visibility
+    vectorQuantizationPane.setVisible(false);
   }
 
   @FXML

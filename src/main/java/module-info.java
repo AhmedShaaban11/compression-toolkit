@@ -14,12 +14,12 @@ module com.ahmed {
   exports com.ahmed.compression.techniques.tech;
   exports com.ahmed.compression.techniques.tech.lossless;
   exports com.ahmed.compression.techniques.tech.lossy;
-  exports com.ahmed.compression.techniques.information;
-  exports com.ahmed.compression.techniques.information.lossless.lz77;
-  exports com.ahmed.compression.techniques.information.lossless.lzw;
-  exports com.ahmed.compression.techniques.information.lossless.standardhuffman;
-  exports com.ahmed.compression.techniques.information.lossy.vectorquantization;
-  exports com.ahmed.compression.techniques.information.lossy.twodprediction;
+  exports com.ahmed.compression.techniques.info;
+  exports com.ahmed.compression.techniques.info.lossless.lz77;
+  exports com.ahmed.compression.techniques.info.lossless.lzw;
+  exports com.ahmed.compression.techniques.info.lossless.standardhuffman;
+  exports com.ahmed.compression.techniques.info.lossy.vectorquantization;
+  exports com.ahmed.compression.techniques.info.lossy.twodprediction;
   exports com.ahmed.compression.techniques.io.lossless;
   opens com.ahmed.compression.techniques.io.lossless to javafx.fxml;
   exports com.ahmed.compression.techniques.io.lossy;
