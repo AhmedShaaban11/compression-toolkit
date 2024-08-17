@@ -11,18 +11,17 @@ import java.util.List;
 import java.util.Stack;
 
 public class VectorQuantization implements Technique<VectorQuantizationCompressedFileInfo, VectorQuantizationDecompressedFileInfo, VectorQuantizationCompressionInfo, VectorQuantizationDecompressionInfo> {
-  // TODO: Change the values of VECTOR_WIDTH, VECTOR_HEIGHT, and CODEBOOKS_LEVELS to be fileInfo.etc()
   private static final int VECTOR_WIDTH = 4;
   private static final int VECTOR_HEIGHT = 4;
   private static final int CODEBOOKS_LEVELS = 3;
 
-  private ArrayList<Vector> vectorize(Raster raster, int vecWidth, int vecHeight, boolean isGrey) {
+  private ArrayList<Vector> vectorize(Raster raster, boolean isGrey) {
     ArrayList<Vector> vectors = new ArrayList<>();
-    for (int x = 0; x < raster.getWidth(); x += vecWidth) {
-      for (int y = 0; y < raster.getHeight(); y += vecHeight) {
-        int[] pixels = isGrey ? new int[vecWidth * vecHeight] : new int[vecWidth * vecHeight * 3]; // TODO grey or rgb
-        int w = Math.min(raster.getWidth() - x, vecWidth);
-        int h = Math.min(raster.getHeight() - y, vecHeight);
+    for (int x = 0; x < raster.getWidth(); x += VECTOR_WIDTH) {
+      for (int y = 0; y < raster.getHeight(); y += VECTOR_HEIGHT) {
+        int[] pixels = isGrey ? new int[VECTOR_WIDTH * VECTOR_HEIGHT] : new int[VECTOR_WIDTH * VECTOR_HEIGHT * 3];
+        int w = Math.min(raster.getWidth() - x, VECTOR_WIDTH);
+        int h = Math.min(raster.getHeight() - y, VECTOR_HEIGHT);
         raster.getPixels(x, y, w, h, pixels);
         vectors.add(new Vector(pixels));
       }
@@ -30,8 +29,8 @@ public class VectorQuantization implements Technique<VectorQuantizationCompresse
     return vectors;
   }
 
-  private Vector calcAvgVector(ArrayList<Vector> vectors, int vecWidth, int vecHeight, boolean isGrey) {
-    int[] avgPixels = isGrey ? new int[vecWidth * vecHeight] : new int[vecWidth * vecHeight * 3];
+  private Vector calcAvgVector(ArrayList<Vector> vectors, boolean isGrey) {
+    int[] avgPixels = isGrey ? new int[VECTOR_WIDTH * VECTOR_HEIGHT] : new int[VECTOR_WIDTH * VECTOR_HEIGHT * 3];
     for (int i = 0; i < avgPixels.length; ++i) {
       int sum = 0;
       for (Vector vec : vectors) {
@@ -42,9 +41,9 @@ public class VectorQuantization implements Technique<VectorQuantizationCompresse
     return new Vector(avgPixels);
   }
 
-  private ArrayList<ArrayList<Vector>> clusterize(ArrayList<Vector> vectors, int vecWidth, int vecHeight, int cnt, boolean isGrey) {
+  private ArrayList<ArrayList<Vector>> clusterize(ArrayList<Vector> vectors, int cnt, boolean isGrey) {
     if (cnt == 0) { return new ArrayList<>(List.of(vectors)); }
-    Vector leftAvgVec = calcAvgVector(vectors, vecWidth, vecHeight, isGrey);
+    Vector leftAvgVec = calcAvgVector(vectors, isGrey);
     Vector rightAvgVec = new Vector(leftAvgVec);
     rightAvgVec.shiftUp();
     ArrayList<Vector> left = new ArrayList<>();
@@ -59,12 +58,12 @@ public class VectorQuantization implements Technique<VectorQuantizationCompresse
       }
     }
     ArrayList<ArrayList<Vector>> clusters = new ArrayList<>();
-    clusters.addAll(clusterize(left, vecWidth, vecHeight, cnt - 1, isGrey));
-    clusters.addAll(clusterize(right, vecWidth, vecHeight, cnt - 1, isGrey));
+    clusters.addAll(clusterize(left, cnt - 1, isGrey));
+    clusters.addAll(clusterize(right, cnt - 1, isGrey));
     return clusters;
   }
 
-  private ArrayList<Vector> generateCodebooks(ArrayList<ArrayList<Vector>> clusters, int vecWidth, int vecHeight, boolean isGrey) {
+  private ArrayList<Vector> generateCodebooks(ArrayList<ArrayList<Vector>> clusters, boolean isGrey) {
     ArrayList<Vector> avgVectors = new ArrayList<>();
     boolean isChanged = true;
     // Continue until no change in the codebooks
@@ -73,7 +72,7 @@ public class VectorQuantization implements Technique<VectorQuantizationCompresse
       avgVectors = new ArrayList<>();
       // Get average vector for each cluster
       for (ArrayList<Vector> cluster : clusters) {
-        Vector avgVec = calcAvgVector(cluster, vecWidth, vecHeight, isGrey);
+        Vector avgVec = calcAvgVector(cluster, isGrey);
         avgVectors.add(avgVec);
       }
       // Assign each vector to the nearest cluster
@@ -110,9 +109,9 @@ public class VectorQuantization implements Technique<VectorQuantizationCompresse
 
   @Override
   public VectorQuantizationCompressionInfo compress(VectorQuantizationDecompressedFileInfo fileInfo) {
-    ArrayList<Vector> vectors = vectorize(fileInfo.raster(), VECTOR_WIDTH, VECTOR_HEIGHT, fileInfo.isGrey());
-    ArrayList<ArrayList<Vector>> clusters = clusterize(vectors, VECTOR_WIDTH, VECTOR_HEIGHT, CODEBOOKS_LEVELS, fileInfo.isGrey());
-    ArrayList<Vector> codebooks = generateCodebooks(clusters, VECTOR_WIDTH, VECTOR_HEIGHT, fileInfo.isGrey());
+    ArrayList<Vector> vectors = vectorize(fileInfo.raster(), fileInfo.isGrey());
+    ArrayList<ArrayList<Vector>> clusters = clusterize(vectors, CODEBOOKS_LEVELS, fileInfo.isGrey());
+    ArrayList<Vector> codebooks = generateCodebooks(clusters, fileInfo.isGrey());
     for (int i = 0; i < clusters.size(); ++i) {
       for (Vector vec : clusters.get(i)) {
         vec.setLabel(i);

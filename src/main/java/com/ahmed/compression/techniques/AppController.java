@@ -4,8 +4,6 @@ import com.ahmed.compression.techniques.facade.Facade;
 import com.ahmed.compression.techniques.facade.FacadeFactory;
 import javafx.fxml.FXML;
 import javafx.scene.control.ChoiceBox;
-import javafx.scene.control.TextField;
-import javafx.scene.layout.FlowPane;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
 
@@ -15,18 +13,6 @@ import java.nio.file.Path;
 public class AppController {
   @FXML
   public ChoiceBox<?> choiceBox;
-
-  @FXML
-  public TextField vecWidth;
-
-  @FXML
-  public TextField vecHeight;
-
-  @FXML
-  public TextField codebooksLevels;
-
-  @FXML
-  public FlowPane vectorQuantizationPane;
 
   private Facade<?, ?, ?, ?, ?, ?> getCurrentFacade() {
     String techniqueName = choiceBox.getValue().toString();
@@ -39,13 +25,6 @@ public class AppController {
     fileChooser.setTitle(title);
     File file = isSave ? fileChooser.showSaveDialog(new Stage()) : fileChooser.showOpenDialog(new Stage());
     return file.toPath();
-  }
-
-  @FXML
-  public void choiceBoxAction() {
-    boolean isChoiceOnVectorQuantization = choiceBox.getValue().toString().equalsIgnoreCase("Vector Quantization");
-//    vectorQuantizationPane.setVisible(isChoiceOnVectorQuantization); // TODO: Change visibility
-    vectorQuantizationPane.setVisible(false);
   }
 
   @FXML
