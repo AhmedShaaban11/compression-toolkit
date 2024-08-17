@@ -4,8 +4,8 @@
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
 
-    <groupId>com.ahmed.compressiontechniques</groupId>
-    <artifactId>CompressionTechniques</artifactId>
+    <groupId>com.ahmed.compression.toolkit</groupId>
+    <artifactId>CompressionToolkit</artifactId>
     <version>1.0-SNAPSHOT</version>
     <name>lzw</name>
 
@@ -60,7 +60,7 @@
                         <!-- Default configuration for running with: mvn clean javafx:run -->
                         <id>default-cli</id>
                         <configuration>
-                            <mainClass>com.ahmed.compressiontechniques/com.ahmed.compression.techniques.AppApplication</mainClass>
+                            <mainClass>com.ahmed.compression.toolkit/com.ahmed.compression.toolkit.AppApplication</mainClass>
                             <launcher>app</launcher>
                             <jlinkZipName>app</jlinkZipName>
                             <jlinkImageName>app</jlinkImageName>

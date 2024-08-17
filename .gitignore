@@ -41,3 +41,5 @@ build/
 ### others ###
 input
 img
+.mvn
+.idea
