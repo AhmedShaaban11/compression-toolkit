@@ -1,9 +1,8 @@
 # Compression Toolkit
 
-## Description
 **Compression Toolkit** is a Java-based GUI application designed to compress and decompress text and images using a variety of techniques. The toolkit provides an intuitive interface for selecting and applying compression methods suitable for your data type.
 
-### Supported Techniques
+## Supported Techniques
 - **Text Compression**:
   - LZ77
   - LZW
